@@ -1,0 +1,9 @@
+src -> assets 放置一些资源：img、css
+src -> common 放置一些公共的js代码，比如说公共的常量等
+src -> components 组件
+src -> components -> common 公共的组件（可以在其他项目中使用的组件）
+src -> components -> content 项目的组件
+src -> network 网络请求
+src -> router 路由
+src -> store Vuex
+src -> views 主要视图
