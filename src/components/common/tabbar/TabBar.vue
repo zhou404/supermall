@@ -6,21 +6,20 @@
 
 <script>
 export default {
-  name: "TabBar",
-};
+  name: "TabBar"
+}
 </script>
 
 <style scoped>
+@import '~assets/css/base.css';
 #tab-bar {
-  /* 弹性布局 */
   display: flex;
   background-color: #f6f6f6;
-  /* 固定定位 */
   position: fixed;
   left: 0;
   right: 0;
   bottom: 0;
-  box-shadow: 0 -1px 1px rgba(100, 100, 100, 0.1);
+  box-shadow: 0 -2px 1px rgba(100,100,100,0.1);
 }
 
 </style>
