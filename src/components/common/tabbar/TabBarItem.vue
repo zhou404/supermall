@@ -48,11 +48,13 @@ export default {
   flex: 1;
   text-align: center;
   height: 49px;
+  font-size: 14px;
+  padding-top: 5px;
 }
 
 .tab-bar-item img {
-  width: 24px;
-  height: 24px;
+  width: 20px;
+  height: 20px;
 }
 
 .active {
