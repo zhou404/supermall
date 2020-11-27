@@ -6,8 +6,8 @@
     <home-swiper class="home-swiper" :banners="banners"></home-swiper>
     <recommend-view :recommends="recommends"></recommend-view>
     <feature-view></feature-view>
-    <tab-control class="tab-control" :titles="['流行', '新款', '精选']"></tab-control>
-    <good-list :goods-list="goods['pop'].list"></good-list>
+    <tab-control class="tab-control" :titles="['流行', '新款', '精选']" @tabClick="tabClick"></tab-control>
+    <good-list :goods-list="showGoods"></good-list>
   </div>
 </template>
 
@@ -22,7 +22,7 @@ import RecommendView from "@/views/home/Childcomps/RecommendView";
 //导入Feature组件
 import FeatureView from "@/views/home/Childcomps/FeatureView";
 //导入TabControl组件
-import TabControl from "@/components/content/mainTabBar/TabControl";
+import TabControl from "@/components/content/tabControl/TabControl";
 //导入商品列表
 import GoodList from "@/components/content/goods/GoodList";
 
@@ -36,6 +36,11 @@ export default {
     TabControl,
     GoodList
   },
+  computed: {
+    showGoods() {
+      return this.goods[this.currentType].list
+    }
+  },
   data() {
     return {
       banners: [],
@@ -45,7 +50,8 @@ export default {
         'pop': {page: 0, list: []},
         'new': {page: 0, list: []},
         'sell': {page: 0, list: []},
-      }
+      },
+      currentType: 'pop'
     }
   },
 //  生命周期函数，在Home组件创建时就请求数据
@@ -61,6 +67,23 @@ export default {
     this.getHomeGoods('sell')
   },
   methods: {
+    tabClick(index) {
+      switch (index) {
+        case 0:
+          this.currentType = 'pop'
+          break
+        case 1:
+          this.currentType = 'new'
+          break
+        case 2:
+          this.currentType = 'sell'
+          break
+      }
+    },
+
+    /**
+     * 网络请求相关方法
+     */
     getHomeMultidata() {
       getHomeMultidata().then(res => {
         // console.log(res);
@@ -72,7 +95,7 @@ export default {
       //因为本地库里page初始值为0，但是数据库中的page初始值为1，所以要+1
       const page = this.goods[type].page + 1
       getHomeGoods(type, page).then(res => {
-        console.log(res.data.data.list);
+        // console.log(res.data.data.list);
         //这里使用push向数组中加入数据，...res.data.list是新语法，表示将res.data.list中的数据依次向本地的list中push，当数据改变时，本地的list数据也响应改变
         this.goods[type].list.push(...res.data.data.list)
         //page+1，本地的list中的page+1
