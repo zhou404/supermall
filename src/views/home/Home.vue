@@ -3,11 +3,16 @@
     <nav-bar class="home-nav">
       <div slot="nav-center">购物街</div>
     </nav-bar>
-    <home-swiper class="home-swiper" :banners="banners"></home-swiper>
-    <recommend-view :recommends="recommends"></recommend-view>
-    <feature-view></feature-view>
-    <tab-control class="tab-control" :titles="['流行', '新款', '精选']" @tabClick="tabClick"></tab-control>
-    <good-list :goods-list="showGoods"></good-list>
+    <scroll class="content" ref="scroll" :probe-type="3" @scroll="conetntScroll" :pullUpLoad="true" @loadmore="LoadMore">
+      <home-swiper class="home-swiper" :banners="banners"></home-swiper>
+      <recommend-view :recommends="recommends"></recommend-view>
+      <feature-view></feature-view>
+      <tab-control class="tab-control" :titles="['流行', '新款', '精选']" @tabClick="tabClick"></tab-control>
+      <good-list :goods-list="showGoods"></good-list>
+    </scroll>
+    <!--当我们需要监听一个组件的原生事件(不一定是点击事件)时，必须给对应的事件上加上.native修饰符，才能进行监听-->
+    <!-- <back-top @click="backClick"></back-top> -->
+    <back-top @click.native="backClick" v-show="isShow"></back-top>
   </div>
 </template>
 
@@ -25,6 +30,11 @@ import FeatureView from "@/views/home/Childcomps/FeatureView";
 import TabControl from "@/components/content/tabControl/TabControl";
 //导入商品列表
 import GoodList from "@/components/content/goods/GoodList";
+//导入BackTop组件
+import BackTop from "@/components/content/backTop/BackTop";
+
+//导入Better-Scroll滚动组件
+import Scroll from "@/components/common/scroll/Scroll";
 
 export default {
   name: 'Home',
@@ -34,7 +44,9 @@ export default {
     RecommendView,
     FeatureView,
     TabControl,
-    GoodList
+    GoodList,
+    Scroll,
+    BackTop
   },
   computed: {
     showGoods() {
@@ -51,7 +63,8 @@ export default {
         'new': {page: 0, list: []},
         'sell': {page: 0, list: []},
       },
-      currentType: 'pop'
+      currentType: 'pop',
+      isShow: false
     }
   },
 //  生命周期函数，在Home组件创建时就请求数据
@@ -67,6 +80,9 @@ export default {
     this.getHomeGoods('sell')
   },
   methods: {
+    /**
+     * 事件响应函数
+     * */
     tabClick(index) {
       switch (index) {
         case 0:
@@ -80,7 +96,22 @@ export default {
           break
       }
     },
-
+    backClick() {
+      //this.$refs.scroll是获取到ref值为scroll的组件，后面可以加.组件内定义的东西(methods、computed、data等)
+      //scroll(x, y, time)方法：滚动到指定(x, y)位置，过程时间为500ms
+      // this.$refs.scroll.bs.scrollTo(0, 0, 500)
+      this.$refs.scroll.backTop(0, 0, 500)
+    },
+    conetntScroll(position) {
+      // console.log(position);
+      this.isShow = (- position.y) > 1000
+    },
+    LoadMore() {
+      // console.log('上拉加载更多');
+      this.getHomeGoods(this.currentType)
+      // 再次刷新
+      this.$refs.scroll.AgainLoad()
+    },
     /**
      * 网络请求相关方法
      */
@@ -124,9 +155,21 @@ export default {
 }
 
 .tab-control {
-  position: sticky;
-  top: 43px;
+  /*position: sticky，原生，当tab-control达到top高度时固定住不动，新属性，部分PC端可能不支持*/
+  /*position: sticky;*/
+  top: 44px;
   background-color: #ffffff;
   z-index: 9;
 }
+.content {
+  position: absolute;
+  top: 44px;
+  bottom: 49px;
+  left: 0;
+  right: 0;
+}
+/*.content {*/
+/*  height: calc(100% - 93px);*/
+/*  overflow: hidden;*/
+/*}*/
 </style>
