@@ -109,8 +109,8 @@ export default {
     LoadMore() {
       // console.log('上拉加载更多');
       this.getHomeGoods(this.currentType)
-      // 再次刷新
-      this.$refs.scroll.AgainLoad()
+      // 修复刷新数据之后，页面不可下滑问题
+      this.$refs.scroll.bs.refresh()
     },
     /**
      * 网络请求相关方法
@@ -131,6 +131,8 @@ export default {
         this.goods[type].list.push(...res.data.data.list)
         //page+1，本地的list中的page+1
         this.goods[type].page += 1
+        // 再次刷新
+        this.$refs.scroll.AgainLoad()
       })
     }
   }
