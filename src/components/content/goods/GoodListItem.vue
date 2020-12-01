@@ -1,6 +1,6 @@
 <template>
   <div class="goods-list-item">
-    <a :href="goodsListItem.clientUrl">
+    <a @click="GoodsClick">
       <img :src="goodsListItem.show.img" @load="itemImageLoad">
       <div class="goods-info">
         <p>{{goodsListItem.title}}</p>
@@ -25,6 +25,11 @@ export default {
   methods: {
     itemImageLoad() {
       this.$bus.$emit('itemImageLoad')
+    },
+    GoodsClick() {
+      // push()是可以返回上一个页面
+      this.$router.push('/detail/' + this.goodsListItem.iid)
+
     }
   }
 }

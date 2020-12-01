@@ -3,11 +3,12 @@
     <nav-bar class="home-nav">
       <div slot="nav-center">购物街</div>
     </nav-bar>
+    <tab-control class="tab-control" ref="tabControl1" :titles="['流行', '新款', '精选']" @tabClick="tabClick" v-show="isTabFixed"></tab-control>
     <scroll class="content" ref="scroll" :probe-type="3" @scroll="conetntScroll" :pullUpLoad="true" @loadmore="LoadMore">
-      <home-swiper class="home-swiper" :banners="banners"></home-swiper>
+      <home-swiper class="home-swiper" :banners="banners" @swiperImageLoad="swiperImageLoad"></home-swiper>
       <recommend-view :recommends="recommends"></recommend-view>
       <feature-view></feature-view>
-      <tab-control class="tab-control" :titles="['流行', '新款', '精选']" @tabClick="tabClick"></tab-control>
+      <tab-control ref="tabControl2" :titles="['流行', '新款', '精选']" @tabClick="tabClick"></tab-control>
       <good-list :goods-list="showGoods"></good-list>
     </scroll>
     <!--当我们需要监听一个组件的原生事件(不一定是点击事件)时，必须给对应的事件上加上.native修饰符，才能进行监听-->
@@ -35,6 +36,8 @@ import BackTop from "@/components/content/backTop/BackTop";
 
 //导入Better-Scroll滚动组件
 import Scroll from "@/components/common/scroll/Scroll";
+//导入防抖动函数
+import {debounce} from "@/common/utils";
 
 export default {
   name: 'Home',
@@ -64,7 +67,10 @@ export default {
         'sell': {page: 0, list: []},
       },
       currentType: 'pop',
-      isShow: false
+      isShow: false,
+      tabOffsetTop: 0,
+      isTabFixed: false,
+      saveY: 0
     }
   },
 //  生命周期函数，在Home组件创建时就请求数据
@@ -79,17 +85,42 @@ export default {
     //精选
     this.getHomeGoods('sell')
   },
+  // 进入组件时触发
+  activated() {
+    this.$refs.scroll.bs.scrollTo(0, this.saveY, 0)
+    // 修复连续切换时，有时页面返回顶部问题
+    this.$refs.scroll.refresh()
+  },
+  // 离开组件时触发
+  deactivated() {
+    this.saveY = this.$refs.scroll.getScrollY()
+    console.log(this.saveY);
+  },
   mounted() {
     // 监听item中图片加载完成
+    const refresh = debounce(this.$refs.scroll.refresh, 200)
     this.$bus.$on('itemImageLoad', () => {
-      // console.log('------');
-      this.$refs.scroll.refresh()
+      refresh()
     })
+  },
+  destroyed() {
+    console.log('Home 别销毁了');
   },
   methods: {
     /**
      * 事件响应函数
      * */
+    // 刷新频繁的防抖动函数处理
+    // 参数：需要做防抖动处理的函数、延迟时间
+    // debounce(func, delay) {
+    //   let timer = null
+    //   return function (...args) {
+    //     if (timer) clearTimeout(timer)
+    //     timer = setTimeout(() => {
+    //       func.apply(this, args)
+    //     }, delay)
+    //   }
+    // },
     tabClick(index) {
       switch (index) {
         case 0:
@@ -102,6 +133,8 @@ export default {
           this.currentType = 'sell'
           break
       }
+      this.$refs.tabControl1.currentIndex = index
+      this.$refs.tabControl2.currentIndex = index
     },
     backClick() {
       //this.$refs.scroll是获取到ref值为scroll的组件，后面可以加.组件内定义的东西(methods、computed、data等)
@@ -111,11 +144,22 @@ export default {
     },
     conetntScroll(position) {
       // console.log(position);
+      // 判断BackTop是否显示
       this.isShow = (- position.y) > 1000
+      // 决定tabControl是否吸顶(position：fixed)，默认不吸顶
+      this.isTabFixed = (-position.y) > this.tabOffsetTop
     },
     LoadMore() {
       // console.log('上拉加载更多');
       this.getHomeGoods(this.currentType)
+    },
+    swiperImageLoad() {
+      // 获取加载完成的事件监听
+      // 所有的组件都有一个属性$el：用于获取组件中的元素
+      // 这里拿到的高度不是准确的，因为图片的加载会影响这里获取的高度
+      // console.log(this.$refs.tabControl.$el.offsetTop);
+      // console.log(this.$refs.tabControl.$el.offsetTop);
+      this.tabOffsetTop = this.$refs.tabControl2.$el.offsetTop + 43
     },
     /**
      * 网络请求相关方法
@@ -150,10 +194,7 @@ export default {
   box-shadow: 0 2px 2px rgba(100, 100, 100, 0.2);
   color: #f6f6f6;
   font-size: 16px;
-  position: fixed;
-  left: 0;
-  right: 0;
-  top: 0;
+  position: relative;
   z-index: 9;
 }
 
@@ -161,19 +202,24 @@ export default {
   margin-top: 44px;
 }
 
-.tab-control {
+/*.tab-control {*/
   /*position: sticky，原生，当tab-control达到top高度时固定住不动，新属性，部分PC端可能不支持*/
   /*position: sticky;*/
-  top: 44px;
-  background-color: #ffffff;
-  z-index: 9;
-}
+  /*top: 44px;*/
+  /*background-color: #ffffff;*/
+  /*z-index: 9;*/
+/*}*/
 .content {
   position: absolute;
   top: 44px;
   bottom: 49px;
   left: 0;
   right: 0;
+}
+.tab-control {
+  position: relative;
+  z-index: 9;
+  background-color: #ffffff;
 }
 /*.content {*/
 /*  height: calc(100% - 93px);*/

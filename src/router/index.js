@@ -6,6 +6,7 @@ const Home = () => import('../views/home/Home')
 const Category = () => import('../views/category/Category')
 const Cart = () => import('../views/cart/Cart')
 const Profile = () => import('../views/profile/Profile')
+const Detail = () => import('../views/detail/Detail')
 
 
 // 1.安装插件
@@ -43,6 +44,11 @@ const routes = [
     meta: {
       title: '我的'
     }
+  },
+  {
+    path: '/detail/:iid',
+    component: Detail,
+    title: '商品详情'
   }
 ]
 // 2.创建router

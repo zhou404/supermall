@@ -52,14 +52,20 @@ export default {
   methods: {
     // 返回顶部
     backTop(x, y, time) {
-      this.bs.scrollTo(x, y, time)
+      this.bs && this.bs.scrollTo(x, y, time)
     },
     // 再一次使用上拉加载更多
     AgainLoad() {
-      this.bs.finishPullUp()
+      this.bs && this.bs.finishPullUp()
     },
+    // 刷新bs
     refresh() {
-      this.bs.refresh()
+      // console.log('---------');
+      this.bs && this.bs.refresh()
+    },
+    // 获取当前的高度
+    getScrollY() {
+      return this.bs ? this.bs.y : 0
     }
   }
 }
