@@ -79,6 +79,13 @@ export default {
     //精选
     this.getHomeGoods('sell')
   },
+  mounted() {
+    // 监听item中图片加载完成
+    this.$bus.$on('itemImageLoad', () => {
+      // console.log('------');
+      this.$refs.scroll.refresh()
+    })
+  },
   methods: {
     /**
      * 事件响应函数
@@ -109,8 +116,6 @@ export default {
     LoadMore() {
       // console.log('上拉加载更多');
       this.getHomeGoods(this.currentType)
-      // 修复刷新数据之后，页面不可下滑问题
-      this.$refs.scroll.bs.refresh()
     },
     /**
      * 网络请求相关方法

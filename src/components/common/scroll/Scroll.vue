@@ -57,6 +57,9 @@ export default {
     // 再一次使用上拉加载更多
     AgainLoad() {
       this.bs.finishPullUp()
+    },
+    refresh() {
+      this.bs.refresh()
     }
   }
 }
