@@ -6,6 +6,9 @@
       <detail-base-info :goods="goods"/>
       <detail-shop-info :shop="shop"/>
       <detail-goods-info :detail-goods-info="detailGoodsInfo" @imageload="imageLoad"/>
+      <detail-param-info :params-info="paramsInfo"/>
+      <detail-goods-rate :goods-rate="goodsRate"/>
+      <detail-sku-info :goods-skus-info="goodsSkusInfo"/>
     </scroll>
   </div>
 </template>
@@ -21,9 +24,15 @@ import DetailBaseInfo from "@/views/detail/Childcomps/DetailBaseInfo";
 import DetailShopInfo from "@/views/detail/Childcomps/DetailShopInfo";
 //导入DetailGoodsInfo组件
 import DetailGoodsInfo from "@/views/detail/Childcomps/DetailGoodsInfo";
+//导入DetailParamInfo组件
+import DetailParamInfo from "@/views/detail/Childcomps/DetailParamInfo";
+//导入DetailGoodsRate组件
+import DetailGoodsRate from "@/views/detail/Childcomps/DetailGoodsRate";
+//导入DetailSkuInfo组件
+import DetailSkuInfo from "@/views/detail/Childcomps/DetailSkuInfo";
 
 //导入请求数据函数
-import {getDetailData, GoodsInfo, Shop} from "@/network/detail";
+import {getDetailData, GoodsInfo, Shop, GoodsParam} from "@/network/detail";
 //导入Scroll滚动组件
 import Scroll from "@/components/common/scroll/Scroll";
 
@@ -35,6 +44,9 @@ export default {
     DetailBaseInfo,
     DetailShopInfo,
     DetailGoodsInfo,
+    DetailParamInfo,
+    DetailGoodsRate,
+    DetailSkuInfo,
     Scroll
   },
   data() {
@@ -43,7 +55,10 @@ export default {
       TopImages: [],
       goods: {},
       shop: {},
-      detailGoodsInfo: {}
+      detailGoodsInfo: {},
+      paramsInfo: {},
+      goodsRate: {},
+      goodsSkusInfo: {}
     }
   },
   created() {
@@ -61,6 +76,12 @@ export default {
       this.shop = new Shop(data.shopInfo)
       // 4.获取商品详情信息
       this.detailGoodsInfo = data.detailInfo
+      // 5.获取商品参数信息
+      this.paramsInfo = new GoodsParam(data.itemParams.info, data.itemParams.rule)
+      // 6.获取商品评价信息
+      this.goodsRate = data.rate
+      // 7.获取同款商品信息
+      this.goodsSkusInfo = data.skuInfo.skus
     })
   },
   methods: {
