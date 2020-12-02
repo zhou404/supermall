@@ -34,3 +34,22 @@ export class GoodsInfo {
     this.realPrice = itemInfo.lowNowPrice
   }
 }
+
+//店铺信息整合
+export class Shop {
+  constructor(shopInfo) {
+    //店铺名称
+    this.logo = shopInfo.shopLogo
+    //店铺名称
+    this.name = shopInfo.name
+    //
+    this.fans = shopInfo.cFans
+    this.sells = shopInfo.cSells
+    //店铺评分
+    this.score = shopInfo.score
+    //店铺商品数量
+    this.goodsCount = shopInfo.cGoods
+    //商品地址
+    this.shopUrl =shopInfo.shopUrl
+  }
+}

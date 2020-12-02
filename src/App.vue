@@ -20,6 +20,6 @@ export default {
 
 <style>
 .main-tab-bar {
-  z-index: 999;
+  z-index: 9;
 }
 </style>

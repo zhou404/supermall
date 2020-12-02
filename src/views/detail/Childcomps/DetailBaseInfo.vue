@@ -37,6 +37,10 @@ export default {
 </script>
 
 <style scoped>
+.detail-base-info {
+  padding-bottom: 20px;
+  border-bottom: 5px solid rgba(100,100,100,0.1);
+}
 .base-title {
   padding: 10px;
   font-size: 14px;

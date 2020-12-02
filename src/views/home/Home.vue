@@ -94,7 +94,7 @@ export default {
   // 离开组件时触发
   deactivated() {
     this.saveY = this.$refs.scroll.getScrollY()
-    console.log(this.saveY);
+    // console.log(this.saveY);
   },
   mounted() {
     // 监听item中图片加载完成
@@ -104,7 +104,7 @@ export default {
     })
   },
   destroyed() {
-    console.log('Home 别销毁了');
+    console.log('Home 销毁了');
   },
   methods: {
     /**
