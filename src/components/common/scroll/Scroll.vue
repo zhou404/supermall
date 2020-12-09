@@ -50,7 +50,7 @@ export default {
     })
   },
   methods: {
-    // 返回顶部
+    // 跳转到指定位置
     backTop(x, y, time) {
       this.bs && this.bs.scrollTo(x, y, time)
     },

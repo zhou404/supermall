@@ -49,7 +49,8 @@ export default {
     TabControl,
     GoodList,
     Scroll,
-    BackTop
+    BackTop,
+    ItemImgLoad: null
   },
   computed: {
     showGoods() {
@@ -95,13 +96,18 @@ export default {
   deactivated() {
     this.saveY = this.$refs.scroll.getScrollY()
     // console.log(this.saveY);
+    // 取消掉全局的事件监听，参数：需要取消的事件，需要取消执行的函数
+    // 第二个参数要写函数，所以我们可以在将这个函数先保存起来，然后直接拿到这里来用
+    this.$bus.$off('homeItemImgLoad', this.ItemImgLoad)
   },
   mounted() {
     // 监听item中图片加载完成
     const refresh = debounce(this.$refs.scroll.refresh, 200)
-    this.$bus.$on('itemImageLoad', () => {
+    // 将要执行的函数保存起来
+    this.ItemImgLoad = () => {
       refresh()
-    })
+    }
+    this.$bus.$on('homeItemImgLoad', this.ItemImgLoad)
   },
   destroyed() {
     console.log('Home 销毁了');

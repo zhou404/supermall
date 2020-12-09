@@ -64,4 +64,10 @@ export class GoodsParam {
   }
 }
 
+//获取推荐商品信息
+export function getRecommendData() {
+  return request({
+    url: '/recommend'
+  })
+}
 
