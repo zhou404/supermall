@@ -16,7 +16,7 @@ export class GoodsInfo {
   constructor(itemInfo, columns, services) {
     // 商品标题
     this.title = itemInfo.title
-    // 商品
+    // 商品描述
     this.desc = itemInfo.desc
     // 新的价格
     this.newPrice = itemInfo.price
@@ -30,7 +30,7 @@ export class GoodsInfo {
     this.columns = columns
     // 保障信息
     this.services = services
-    //
+    // 加入购物车时的商品价格
     this.realPrice = itemInfo.lowNowPrice
   }
 }

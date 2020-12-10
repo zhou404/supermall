@@ -10,6 +10,8 @@
       <detail-goods-rate :goods-rate="goodsRate" ref="comment"/>
       <detail-sku-info :goods-skus-info="recommends" ref="recommend"/>
     </scroll>
+    <detail-bottom-bar @addToCart="addToCart"/>
+    <back-top @click.native="backClick" v-show="isShow"></back-top>
   </div>
 </template>
 
@@ -30,16 +32,21 @@ import DetailParamInfo from "@/views/detail/Childcomps/DetailParamInfo";
 import DetailGoodsRate from "@/views/detail/Childcomps/DetailGoodsRate";
 //导入DetailSkuInfo组件
 import DetailSkuInfo from "@/views/detail/Childcomps/DetailSkuInfo";
+//导入DetailBottomBar组件
+import DetailBottomBar from "@/views/detail/Childcomps/DetailBottomBar";
 
 //导入请求数据函数
 import {getDetailData, GoodsInfo, Shop, GoodsParam, getRecommendData} from "@/network/detail";
 //导入Scroll滚动组件
 import Scroll from "@/components/common/scroll/Scroll";
+//导入BackTop混入函数
+import {backTopMixin} from "@/common/mixin";
 //导入防抖动函数
 import {debounce} from "@/common/utils";
 
 export default {
   name: "detail",
+  mixins: [backTopMixin],
   components: {
     DetailNavBar,
     DetailSwiper,
@@ -49,6 +56,7 @@ export default {
     DetailParamInfo,
     DetailGoodsRate,
     DetailSkuInfo,
+    DetailBottomBar,
     Scroll
   },
   data() {
@@ -71,6 +79,7 @@ export default {
     this.iid = this.$route.params.iid
     // 请求数据
     getDetailData(this.iid).then(res => {
+      console.log(res);
       const data = res.data.result
       // 1.顶部轮播图图片
       this.TopImages = data.itemInfo.topImages
@@ -104,7 +113,7 @@ export default {
         this.themeTopYs.push(this.$refs.params.$el.offsetTop - 44)
         this.themeTopYs.push(this.$refs.comment.$el.offsetTop - 44)
         this.themeTopYs.push(this.$refs.recommend.$el.offsetTop - 44)
-        console.log(this.themeTopYs);
+        // console.log(this.themeTopYs);
       }, 100)
     })
     // 获取推荐商品信息
@@ -140,6 +149,19 @@ export default {
           this.$refs.nav.currentIndex = this.currentIndex
         }
       }
+      // 判断BackTop是否显示
+      this.listenShowBackTop(position)
+    },
+    addToCart() {
+      // 1.获取当前商品的，购物车需要进行展示的数据，整体是一个对象
+      const product = {}
+      product.image = this.TopImages[0]               //图片
+      product.title = this.detailGoodsInfo.title      //标题
+      product.desc = this.detailGoodsInfo.desc        //描述
+      product.price = this.detailGoodsInfo.realPrice  //价格
+      product.iid = this.iid                          //iid唯一商品标识
+      // 提交数据
+      this.$store.commit('addCart', product)
     }
   },
   mounted() {
@@ -166,6 +188,6 @@ export default {
   background-color: #ffffff;
 }
 .content {
-  height: calc(100% - 44px);
+  height: calc(100% - 44px - 45px);
 }
 </style>
